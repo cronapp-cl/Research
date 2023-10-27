@@ -1,115 +1,85 @@
-require(gender)
-require(readxl)
-require(ggplot2)
-require(nortest)
-if (!require(coin)) {
-  install.packages("coin")
-}
-library(coin)
+list_of_packages <- c("httr", "readxl", "dplyr", "ggplot2", "nortest", "coin")
 
-data <- read_excel("Github/Research/patients.xlsx")
+# Function to automatically install and load multiple packages
+new_packages <- list_of_packages[!(list_of_packages %in% installed.packages()[,"Package"])]
+if(length(new_packages)) install.packages(new_packages)
 
+# Load the packages
+invisible(lapply(list_of_packages, library, character.only = TRUE))
+
+# URL of the Excel file
+url <- "https://github.com/cronapp-cl/Research/raw/main/patients.xlsx"
+
+# Read the data directly from the URL
+temp_file <- tempfile(fileext = ".xlsx")
+GET(url, write_disk(temp_file))
+data <- read_excel(temp_file)
+
+# Data pre-processing
 data <- data %>% 
   mutate(treatment = as.factor(treatment))
 
-# Descriptive statistics by group
+# DESCRIPTIVE STATISTICS
 data_summary <- data %>%
   group_by(treatment) %>%
   summarise(
     count = n(),
     avg_age = mean(age, na.rm = TRUE),
     avg_tech_literacy = mean(tech_literacy, na.rm = TRUE),
-    proportion_male = mean(gender == 'M', na.rm = TRUE), # 'M' for males
-    proportion_female = mean(gender == 'F', na.rm = TRUE) # 'F' for females
+    proportion_male = mean(gender == 'M', na.rm = TRUE),
+    proportion_female = mean(gender == 'F', na.rm = TRUE)
   )
-
 print(data_summary)
 
-
-# Bar chart for gender distribution
+# VISUALIZATIONS AND TESTS
+# Gender distribution by treatment group
 ggplot(data, aes(x = treatment, fill = gender)) +
   geom_bar(position = "dodge") +
   labs(title = "Gender Distribution by Treatment Group", x = "Treatment Group", fill = "Gender")
 
-# Chi-squared test for 'gender'
-table_gender <- table(data$gender, data$treatment, margin(1))
-print(table_gender)
-chisq_result <- chisq.test(table_gender)
-
-
-# Print the chi-squared test result
+# Chi-square test for 'gender'
+chisq_result <- chisq.test(table(data$gender, data$treatment))
 print(chisq_result)
 
-
-
 # NORMALITY ASSUMPTION
+# Density plot for 'tech_literacy'
 ggplot(data, aes(x = tech_literacy)) +
   geom_density() +
   facet_wrap(~treatment)
-lillie.test(data[data$treatment == "Control",]$tech_literacy)
-lillie.test(data[data$treatment == "Tratamiento",]$tech_literacy)
- # not normal
 
-wilcox_test(tech_literacy ~ treatment, data = data, conf.int = TRUE)
+# Normality tests
+lillie.test(data$tech_literacy[data$treatment == "Control"])
+lillie.test(data$tech_literacy[data$treatment == "Tratamiento"])
 
+# Wilcoxon test
+wilcox_test_result <- wilcox_test(tech_literacy ~ treatment, data = data, conf.int = TRUE)
+print(wilcox_test_result)
 
+# Density plot for 'age' and QQ plots
 ggplot(data, aes(x = age)) +
   geom_density() +
   facet_wrap(~treatment)
 
-# Preparamos los datos para el grupo "Control"
-data_control <- data[data$treatment == "Control", ]$age
+data_combined <- data %>% 
+  select(age, treatment) %>% 
+  mutate(group = factor(treatment))
 
-# Preparamos los datos para el grupo "Tratamiento"
-data_treatment <- data[data$treatment == "Tratamiento", ]$age
-
-# Hacemos el QQ-plot para el grupo "Control"
-qqplot <- ggplot(data.frame(sample = data_control), aes(sample = sample)) +
-  stat_qq() +
-  stat_qq_line(colour = "red") + 
-  ggtitle("QQ-plot for Age among control group") +
-  theme_minimal() +
-  xlab("Cuantiles teóricos") +
-  ylab("Cuantiles de los datos")
-
-print(qqplot)
-
-# Hacemos el QQ-plot para el grupo "Tratamiento"
-qqplot <- ggplot(data.frame(sample = data_treatment), aes(sample = sample)) +
-  stat_qq() +
-  stat_qq_line(colour = "red") + 
-  ggtitle("QQ-plot for Age among treatment group") +
-  theme_minimal() +
-  xlab("Theoric Quantiles") +
-  ylab("Empiric Quantiles")
-
-print(qqplot)
-
-data_control <- data.frame(age = data[data$treatment == "Control", ]$age, 
-                           group = "Control")
-data_treatment <- data.frame(age = data[data$treatment == "Tratamiento", ]$age, 
-                             group = "Tratamiento")
-
-# Unimos ambos conjuntos de datos
-data_combined <- rbind(data_control, data_treatment)
-
-# Ahora creamos el QQ-plot usando ggplot2, especificando 'group' como la variable de facetas.
 ggplot(data_combined, aes(sample = age)) +
   stat_qq() +
-  stat_qq_line(colour = "red") +  # Esto añade la línea de referencia teórica
-  facet_wrap(~group, ncol = 2, scales = "free") +  # Esto crea los paneles separados por grupo
-  ggtitle("QQ-plots para 'age' en grupos de tratamiento") +
-  theme_minimal() +
-  xlab("Cuantiles teóricos") +
-  ylab("Cuantiles de los datos")
+  stat_qq_line(colour = "red") +
+  facet_wrap(~group, ncol = 2, scales = "free") +
+  ggtitle("QQ-plots for 'age' in treatment groups") +
+  theme_minimal()
 
-lillie.test(data[data$treatment == "Control",]$age)
-lillie.test(data[data$treatment == "Tratamiento",]$age)
+# Normality tests for 'age'
+lillie.test(data$age[data$treatment == "Control"])
+lillie.test(data$age[data$treatment == "Tratamiento"])
 
-# Wilcoxon Mann Whitney
-wilcox_test(age ~ treatment, data = data, conf.int = TRUE)
+# Wilcoxon test for 'age'
+wilcox_test_result <- wilcox_test(age ~ treatment, data = data, conf.int = TRUE)
+print(wilcox_test_result)
+
+# Clean up the environment from temporary files
+unlink(temp_file)
 
 
-
-
-t.test(tech_literacy ~ treatment, data = data)
