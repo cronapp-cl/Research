@@ -31,43 +31,57 @@ data_summary <- data %>%
   )
 print(data_summary)
 
-# VISUALIZATIONS AND TESTS
-# Gender distribution by treatment group
+#### Boxplot for tech_literacy
+ggplot(data, aes(x = treatment, y = tech_literacy, color = treatment)) +
+  geom_boxplot() +
+  theme_classic() +
+  labs(x = "Treatment Group", y = "Technological literacy")
+
+#### Boxplot for age
+ggplot(data, aes(x = treatment, y = age, color = treatment)) +
+  geom_boxplot() +
+  theme_classic() +
+  labs(x = "Treatment Group", y = "Age")
+
+#### Gender distribution by treatment group
 ggplot(data, aes(x = treatment, fill = gender)) +
   geom_bar(position = "dodge") +
   labs(title = "Gender Distribution by Treatment Group", x = "Treatment Group", fill = "Gender")
 
-# Chi-square test for 'gender'
+### VISUALIZATIONS AND TESTS
+
+
+#### Chi-square test for 'gender'
 chisq_result <- chisq.test(table(data$gender, data$treatment))
 print(chisq_result)
 
-# NORMALITY ASSUMPTION
-# Density plot for 'tech_literacy'
+#### Density plot for tech_literacy
 ggplot(data, aes(x = tech_literacy)) +
   geom_density() +
   facet_wrap(~treatment)
 
-# Normality tests
+#### QQ-plot for tech_literacy
+ggplot(data, aes(sample = tech_literacy)) +
+  stat_qq() +
+  stat_qq_line(colour = "red") +
+  facet_wrap(~treatment, ncol = 2, scales = "free") +
+  ggtitle("QQ-plots for 'tech_literacy' in treatment groups") +
+  theme_minimal()
+
+#### Normality tests
 lillie.test(data$tech_literacy[data$treatment == "Control"])
 lillie.test(data$tech_literacy[data$treatment == "Tratamiento"])
 
-# Wilcoxon test
-wilcox_test_result <- wilcox_test(tech_literacy ~ treatment, data = data, conf.int = TRUE)
-print(wilcox_test_result)
-
-# Density plot for 'age' and QQ plots
+#### Density plot for 'age' 
 ggplot(data, aes(x = age)) +
   geom_density() +
   facet_wrap(~treatment)
 
-data_combined <- data %>% 
-  select(age, treatment) %>% 
-  mutate(group = factor(treatment))
-
-ggplot(data_combined, aes(sample = age)) +
+#### QQ-Plot for 'age'
+ggplot(data, aes(sample = age)) +
   stat_qq() +
   stat_qq_line(colour = "red") +
-  facet_wrap(~group, ncol = 2, scales = "free") +
+  facet_wrap(~treatment, ncol = 2, scales = "free") +
   ggtitle("QQ-plots for 'age' in treatment groups") +
   theme_minimal()
 
@@ -75,11 +89,18 @@ ggplot(data_combined, aes(sample = age)) +
 lillie.test(data$age[data$treatment == "Control"])
 lillie.test(data$age[data$treatment == "Tratamiento"])
 
-# Wilcoxon test for 'age'
+
+
+### Wilcoxon test
+#### Technological literacy ~ Treatment
+wilcox_test_result <- wilcox_test(tech_literacy ~ treatment, data = data, conf.int = TRUE)
+print(wilcox_test_result)
+
+
+#### Age ~ Treatment
 wilcox_test_result <- wilcox_test(age ~ treatment, data = data, conf.int = TRUE)
 print(wilcox_test_result)
 
 # Clean up the environment from temporary files
 unlink(temp_file)
-
 
