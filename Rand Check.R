@@ -85,17 +85,14 @@ ggplot(data, aes(sample = age)) +
   ggtitle("QQ-plots for 'age' in treatment groups") +
   theme_minimal()
 
-# Normality tests for 'age'
+#### Normality tests for 'age'
 lillie.test(data$age[data$treatment == "Control"])
 lillie.test(data$age[data$treatment == "Tratamiento"])
-
-
 
 ### Wilcoxon test
 #### Technological literacy ~ Treatment
 wilcox_test_result <- wilcox_test(tech_literacy ~ treatment, data = data, conf.int = TRUE)
 print(wilcox_test_result)
-
 
 #### Age ~ Treatment
 wilcox_test_result <- wilcox_test(age ~ treatment, data = data, conf.int = TRUE)
