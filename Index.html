@@ -24,18 +24,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="Randomization Check_files/libs/clipboard/clipboard.min.js"></script>
-<script src="Randomization Check_files/libs/quarto-html/quarto.js"></script>
-<script src="Randomization Check_files/libs/quarto-html/popper.min.js"></script>
-<script src="Randomization Check_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="Randomization Check_files/libs/quarto-html/anchor.min.js"></script>
-<link href="Randomization Check_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="Randomization Check_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="Randomization Check_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="Randomization Check_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="Randomization Check_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="Index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Index_files/libs/quarto-html/quarto.js"></script>
+<script src="Index_files/libs/quarto-html/popper.min.js"></script>
+<script src="Index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Index_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Index_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Index_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+<script src="Index_files/libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="Index_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 
 
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="fullcontent">
@@ -73,37 +77,64 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>Response [https://raw.githubusercontent.com/cronapp-cl/Research/main/patients.xlsx]
-  Date: 2023-10-29 01:41
+  Date: 2023-10-29 01:57
   Status: 200
   Content-Type: application/octet-stream
   Size: 18.7 kB
-&lt;ON DISK&gt;  C:\Users\Jose\AppData\Local\Temp\RtmpsNAlaQ\file41d448d3582f.xlsx</code></pre>
+&lt;ON DISK&gt;  C:\Users\Jose\AppData\Local\Temp\Rtmp6xaJbh\filed6464ce1633.xlsx</code></pre>
 </div>
 </div>
 <section id="descriptive-statistics" class="level4">
 <h4 class="anchored" data-anchor-id="descriptive-statistics">DESCRIPTIVE STATISTICS</h4>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 6
-  treatment   count avg_age avg_tech_literacy proportion_male proportion_female
-  &lt;fct&gt;       &lt;int&gt;   &lt;dbl&gt;             &lt;dbl&gt;           &lt;dbl&gt;             &lt;dbl&gt;
-1 Control        60    57.6              30.5           0.45              0.55 
-2 Tratamiento    59    56.3              33.4           0.407             0.593</code></pre>
+<div class="cell-output-display">
+
+<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> treatment </th>
+   <th style="text-align:right;"> count </th>
+   <th style="text-align:right;"> avg_age </th>
+   <th style="text-align:right;"> avg_tech_literacy </th>
+   <th style="text-align:right;"> proportion_male </th>
+   <th style="text-align:right;"> proportion_female </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Control </td>
+   <td style="text-align:right;"> 60 </td>
+   <td style="text-align:right;"> 57.63333 </td>
+   <td style="text-align:right;"> 30.51667 </td>
+   <td style="text-align:right;"> 0.4500000 </td>
+   <td style="text-align:right;"> 0.5500000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Tratamiento </td>
+   <td style="text-align:right;"> 59 </td>
+   <td style="text-align:right;"> 56.33898 </td>
+   <td style="text-align:right;"> 33.40678 </td>
+   <td style="text-align:right;"> 0.4067797 </td>
+   <td style="text-align:right;"> 0.5932203 </td>
+  </tr>
+</tbody>
+</table>
+
 </div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="Randomization-Check_files/figure-html/boxplot%20tech-1.png" class="img-fluid" width="672"></p>
+<p><img src="Index_files/figure-html/boxplot%20tech-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="Randomization-Check_files/figure-html/boxplot%20age-1.png" class="img-fluid" width="672"></p>
+<p><img src="Index_files/figure-html/boxplot%20age-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="Randomization-Check_files/figure-html/gender%20dist-1.png" class="img-fluid" width="672"></p>
+<p><img src="Index_files/figure-html/gender%20dist-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -120,12 +151,12 @@ X-squared = 0.08474, df = 1, p-value = 0.771</code></pre>
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="Randomization-Check_files/figure-html/norm%20tech-1.png" class="img-fluid" width="672"></p>
+<p><img src="Index_files/figure-html/norm%20tech-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="Randomization-Check_files/figure-html/qq%20tech-1.png" class="img-fluid" width="672"></p>
+<p><img src="Index_files/figure-html/qq%20tech-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
@@ -146,12 +177,12 @@ D = 0.38196, p-value &lt; 2.2e-16</code></pre>
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="Randomization-Check_files/figure-html/density%20age-1.png" class="img-fluid" width="672"></p>
+<p><img src="Index_files/figure-html/density%20age-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="Randomization-Check_files/figure-html/qq%20age-1.png" class="img-fluid" width="672"></p>
+<p><img src="Index_files/figure-html/qq%20age-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
