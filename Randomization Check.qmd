@@ -1,12 +1,13 @@
 ---
 title: "Randomization Check"
-author: "José Ruiz-Tagle, MSc, PhD ABD"
+author: "CronAPP"
 format: html
 editor: visual
+css: styles.css  # Note that this is now a top-level field
 ---
 
 ```{r, warning=FALSE, echo=FALSE, message=FALSE}
-list_of_packages <- c("httr", "readxl", "dplyr", "ggplot2", "nortest", "coin")
+list_of_packages <- c("httr", "readxl", "dplyr", "ggplot2", "nortest", "coin", "kableExtra")
 
 # Function to automatically install and load multiple packages
 new_packages <- list_of_packages[!(list_of_packages %in% installed.packages()[,"Package"])]
@@ -43,7 +44,12 @@ data_summary <- data %>%
     proportion_male = mean(gender == 'M', na.rm = TRUE),
     proportion_female = mean(gender == 'F', na.rm = TRUE)
   )
-print(data_summary)
+
+
+# Assuming data_summary is your data frame
+data_summary %>%
+  kable("html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) 
 ```
 
 ```{r boxplot tech, echo=FALSE}

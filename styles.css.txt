@@ -1,0 +1,80 @@
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #333;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: auto;
+  padding: 2em;
+  font-size: 16px;
+}
+
+/* Header styles */
+h1, h2, h3, h4, h5, h6 {
+  color: #333; /* Dark text color for contrast */
+  margin-top: 1.4em;
+}
+
+h1 {
+  border-bottom: 2px solid #eaecef; /* Light grey border */
+  padding-bottom: .3em;
+}
+
+/* Link styles */
+a {
+  color: #0366d6; /* A shade of blue */
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Image styles */
+img {
+  max-width: 100%; /* Makes sure images are responsive */
+}
+
+/* Table styles - makes your tables more readable */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid #dddddd; /* Light grey borders */
+  text-align: left;
+  padding: 8px;
+}
+
+th {
+  background-color: #f4f4f4; /* Light grey background */
+}
+
+tr:nth-child(even) {
+  background-color: #fafafa; /* Zebra stripes */
+}
+
+/* Caption for images or figures */
+figcaption {
+  color: #666;
+  font-size: 90%;
+  margin-top: .5em;
+}
+
+/* Code blocks and preformatted text */
+pre, code {
+  background-color: #f6f8fa; /* Very light grey background */
+  padding: .5em;
+  border-radius: 3px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+code {
+  padding: .2em .4em;
+  margin: 0;
+}
+
+pre {
+  padding: 1em;
+}
+
