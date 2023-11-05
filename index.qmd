@@ -206,4 +206,3 @@ Respecto a las medidas de tamaño del efecto, se puede decir lo siguiente:
 ### Solución
 
 **Análisis Estratificado**: Podría ser útil realizar un análisis estratificado por niveles de literacidad tecnológica para ver si los efectos del tratamiento son consistentes a través de diferentes niveles de habilidad tecnológica.
-
