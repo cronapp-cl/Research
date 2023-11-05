@@ -74,16 +74,6 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell">
 
 </div>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Response [https://raw.githubusercontent.com/cronapp-cl/Research/main/patients.xlsx]
-  Date: 2023-10-29 02:06
-  Status: 200
-  Content-Type: application/octet-stream
-  Size: 18.7 kB
-&lt;ON DISK&gt;  C:\Users\Jose\AppData\Local\Temp\RtmpUtnsZD\file42fc47503082.xlsx</code></pre>
-</div>
-</div>
 <section id="descriptive-statistics" class="level4">
 <h4 class="anchored" data-anchor-id="descriptive-statistics">DESCRIPTIVE STATISTICS</h4>
 <div class="cell">
@@ -94,8 +84,10 @@ ul.task-list li input[type="checkbox"] {
   <tr>
    <th style="text-align:left;"> treatment </th>
    <th style="text-align:right;"> count </th>
-   <th style="text-align:right;"> avg_age </th>
-   <th style="text-align:right;"> avg_tech_literacy </th>
+   <th style="text-align:right;"> median_age </th>
+   <th style="text-align:right;"> IQR_age </th>
+   <th style="text-align:right;"> median_tech_literacy </th>
+   <th style="text-align:right;"> IQR_tech_literacy </th>
    <th style="text-align:right;"> proportion_male </th>
    <th style="text-align:right;"> proportion_female </th>
   </tr>
@@ -104,16 +96,20 @@ ul.task-list li input[type="checkbox"] {
   <tr>
    <td style="text-align:left;"> Control </td>
    <td style="text-align:right;"> 60 </td>
-   <td style="text-align:right;"> 57.63333 </td>
-   <td style="text-align:right;"> 30.51667 </td>
+   <td style="text-align:right;"> 57 </td>
+   <td style="text-align:right;"> 10.75 </td>
+   <td style="text-align:right;"> 33 </td>
+   <td style="text-align:right;"> 5.25 </td>
    <td style="text-align:right;"> 0.4500000 </td>
    <td style="text-align:right;"> 0.5500000 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> Tratamiento </td>
    <td style="text-align:right;"> 59 </td>
-   <td style="text-align:right;"> 56.33898 </td>
-   <td style="text-align:right;"> 33.40678 </td>
+   <td style="text-align:right;"> 55 </td>
+   <td style="text-align:right;"> 13.50 </td>
+   <td style="text-align:right;"> 34 </td>
+   <td style="text-align:right;"> 0.50 </td>
    <td style="text-align:right;"> 0.4067797 </td>
    <td style="text-align:right;"> 0.5932203 </td>
   </tr>
@@ -122,21 +118,25 @@ ul.task-list li input[type="checkbox"] {
 
 </div>
 </div>
+<p>Se observa descriptivamente que el grupo de control y tratamiento están bien balanceados. Eso indica que la aleatorización está relativamente bien.</p>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/boxplot%20tech-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>Se observa una diferencia en torno a la literacidad tecnológica entre el grupo de control y el tratamiento. Por un lado, el grupo tiene varias observaciones con puntajes menores que 30, mientras que el tratamiento muestra una baja dispersión, teniendo como valores atípicos las observaciones menores a 30. A pesar de que las medianas son similares, el grupo de tratamiento muestra una mayor propensión a tener alta literacidad tecnológica en comparación al grupo de control.</p>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/boxplot%20age-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>Los grupos están bastante balanceados en terminos de edad. Muestran una dispersión y centralidad similar.</p>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/gender%20dist-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>Se observa una distribución balanceada del sexo entre grupos. No es espera encontrar diferencias significativas.</p>
 </section>
 <section id="visualizations-and-tests" class="level4">
 <h4 class="anchored" data-anchor-id="visualizations-and-tests">VISUALIZATIONS AND TESTS</h4>
@@ -149,11 +149,14 @@ data:  table(data$gender, data$treatment)
 X-squared = 0.08474, df = 1, p-value = 0.771</code></pre>
 </div>
 </div>
+<p>El test de ji-cuadrado indica que el sexo es independiente del grupo de tratamiento, lo que indica que los grupos están bien balanceados en torno a esta variable.</p>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/norm%20tech-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>La evaluación de normalidad de literacidad tecnológica indica que se debe realizar un test no paramétrico. Utilizaremos Wilcoxon para encontrar diferencias en la mediana de literacidad en ambos grupos. Adicionalmente, estimaremos el tamaño del efecto utilizando Probabilidad de Superioridad (PS).</p>
+<p>Respecto a la variable edad, uno de los dos grupos tiene distribución normal y el otro no. Por lo tanto, utilizaremos una medida conservadora y realizaremos test no paramétricos para estimar diferencias entre los grupos.</p>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/qq%20tech-1.png" class="img-fluid" width="672"></p>
@@ -203,7 +206,7 @@ D = 0.098774, p-value = 0.1626</code></pre>
 </div>
 </section>
 <section id="wilcoxon-test" class="level4">
-<h4 class="anchored" data-anchor-id="wilcoxon-test">Wilcoxon test</h4>
+<h4 class="anchored">Wilcoxon test</h4>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -219,6 +222,7 @@ difference in location
                     -1 </code></pre>
 </div>
 </div>
+<p>El test de wilcoxon para la variable de literacidad tecnológica indica que existen diferencias significativas en torno a la mediana de literacidad entre el grupo de tratamiento y el grupo control. Es decir, el grupo de tratamiento tiene mayor puntaje de literacidad tecnológica que el grupo de control.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -234,6 +238,41 @@ difference in location
                      1 </code></pre>
 </div>
 </div>
+<p>Por otro lado, el test para la variable edad indica que los grupos tienen un buen balance en términos de edad. No se evidencian diferencias significativas en torno a la mediana de edad.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>        W 
+0.2770833 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        W 
+0.5219444 </code></pre>
+</div>
+</div>
+<p>Respecto a las medidas de tamaño del efecto, se puede decir lo siguiente:</p>
+<ul>
+<li><p>La probabilidad de que un paciente al azar del grupo de control tenga un puntaje de literacidad tecnológica mayor que un paciente al azar del grupo de tratamiento es del 27.7%</p></li>
+<li><p>La probabilidad de que un paciente al azar del grupo de control tenga un año más de edad que un paciente al azar del grupo de tratamiento es del 52.2%</p>
+<h3 id="ventajas" class="anchored" data-anchor-id="wilcoxon-test">Ventajas</h3></li>
+</ul>
+<ol type="1">
+<li><p><strong>Facilidad de Adopción</strong>: Una mayor literacidad tecnológica en el grupo de tratamiento sugiere que estos participantes podrían tener menos dificultades para adoptar y utilizar la aplicación móvil. Esto podría facilitar una mejor integración de la tecnología en su manejo de la diabetes.</p></li>
+<li><p><strong>Menor Necesidad de Capacitación</strong>: Menos recursos para capacitar a los usuarios en el uso de la aplicación, permitiendo que la intervención se centre más en el monitoreo y manejo de la diabetes en sí.</p></li>
+<li><p><strong>Positivo Impacto en la Adherencia al Tratamiento</strong>: Una mayor literacidad tecnológica podría estar asociada con una mejor adherencia al tratamiento, ya que los participantes pueden encontrar más fácil y atractivo el uso de la aplicación móvil.</p></li>
+<li><p><strong>Informar Desarrollos Futuros</strong>: Los resultados podrían guiar el desarrollo de futuras intervenciones tecnológicas, destacando que un nivel adecuado de literacidad tecnológica puede facilitar la adopción y el éxito de aplicaciones móviles en el contexto de la salud.</p></li>
+</ol>
+</section>
+<section id="desventajas" class="level3">
+<h3 class="anchored" data-anchor-id="desventajas">Desventajas</h3>
+<ol type="1">
+<li><p><strong>Confounder Potencial</strong>: La literacidad tecnológica podría actuar como un confounder. Si no se controla adecuadamente, podría dar la impresión de que la aplicación móvil es más efectiva de lo que realmente es, simplemente porque los usuarios con mayor literacidad tecnológica podrían tener una mejor capacidad para interactuar con la tecnología y, por lo tanto, obtener un mayor beneficio.</p></li>
+<li><p><strong>Interpretación Cautelosa</strong>: Es importante ser cauteloso al interpretar los resultados y considerar la posibilidad de que la mayor literacidad tecnológica en el grupo de tratamiento pueda haber influido en los resultados.</p></li>
+<li><p><strong>Comunicación de Limitaciones</strong>: Al publicar, sería importante comunicar esta limitación y cómo podría haber afectado los resultados del estudio.</p></li>
+</ol>
+</section>
+<section id="solución" class="level3">
+<h3 class="anchored" data-anchor-id="solución">Solución</h3>
+<p><strong>Análisis Estratificado</strong>: Podría ser útil realizar un análisis estratificado por niveles de literacidad tecnológica para ver si los efectos del tratamiento son consistentes a través de diferentes niveles de habilidad tecnológica.</p>
 </section>
 
 </main>
