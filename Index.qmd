@@ -3,7 +3,7 @@ title: "Randomization Check"
 author: "CronAPP"
 format: html
 editor: visual
-css: styles.css  # Note that this is now a top-level field
+css: styles.css  
 ---
 
 ```{r, warning=FALSE, echo=FALSE, message=FALSE}
@@ -17,7 +17,7 @@ if(length(new_packages)) install.packages(new_packages)
 invisible(lapply(list_of_packages, library, character.only = TRUE))
 ```
 
-```{r data import, echo=FALSE, message=FALSE}
+```{r data import, include=FALSE, message=FALSE}
 # URL of the Excel file
 url <- "https://github.com/cronapp-cl/Research/raw/main/patients.xlsx"
 
@@ -34,46 +34,54 @@ data <- data %>%
 #### DESCRIPTIVE STATISTICS
 
 ```{r descriptive, echo=FALSE}
-# DESCRIPTIVE STATISTICS
 data_summary <- data %>%
   group_by(treatment) %>%
   summarise(
     count = n(),
-    avg_age = mean(age, na.rm = TRUE),
-    avg_tech_literacy = mean(tech_literacy, na.rm = TRUE),
+    median_age = median(age, na.rm = TRUE),
+    IQR_age = IQR(age, na.rm=T),
+    median_tech_literacy = median(tech_literacy, na.rm = TRUE),
+    IQR_tech_literacy = IQR(tech_literacy, na.rm = TRUE),
     proportion_male = mean(gender == 'M', na.rm = TRUE),
     proportion_female = mean(gender == 'F', na.rm = TRUE)
   )
 
-
-# Assuming data_summary is your data frame
 data_summary %>%
   kable("html") %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) 
+
 ```
+
+Se observa descriptivamente que el grupo de control y tratamiento están bien balanceados. Eso indica que la aleatorización está relativamente bien.
 
 ```{r boxplot tech, echo=FALSE}
 #### Boxplot for tech_literacy
 ggplot(data, aes(x = treatment, y = tech_literacy, color = treatment)) +
   geom_boxplot() +
   theme_classic() +
-  labs(x = "Treatment Group", y = "Technological literacy")
+  labs(title = "Boxplot de literacidad tecnológica por grupo", x = "Grupo experimental", y = "Literacidad tecnológica")
 ```
+
+Se observa una diferencia en torno a la literacidad tecnológica entre el grupo de control y el tratamiento. Por un lado, el grupo tiene varias observaciones con puntajes menores que 30, mientras que el tratamiento muestra una baja dispersión, teniendo como valores atípicos las observaciones menores a 30. A pesar de que las medianas son similares, el grupo de tratamiento muestra una mayor propensión a tener alta literacidad tecnológica en comparación al grupo de control.
 
 ```{r boxplot age, echo=FALSE}
 #### Boxplot for age
 ggplot(data, aes(x = treatment, y = age, color = treatment)) +
   geom_boxplot() +
   theme_classic() +
-  labs(x = "Treatment Group", y = "Age")
+  labs(title = "Boxplot de edad por grupo", x = "Grupo experimental", y = "Edad")
 ```
+
+Los grupos están bastante balanceados en terminos de edad. Muestran una dispersión y centralidad similar.
 
 ```{r gender dist, echo=FALSE}
 #### Gender distribution by treatment group
 ggplot(data, aes(x = treatment, fill = gender)) +
   geom_bar(position = "dodge") +
-  labs(title = "Gender Distribution by Treatment Group", x = "Treatment Group", fill = "Gender")
+  labs(title = "Barras agrupadas de sexo y grupo", x = "Grupo experimental", fill = "Sexo",y = "Frecuencia")
 ```
+
+Se observa una distribución balanceada del sexo entre grupos. No es espera encontrar diferencias significativas.
 
 #### VISUALIZATIONS AND TESTS
 
@@ -83,12 +91,18 @@ chisq_result <- chisq.test(table(data$gender, data$treatment))
 print(chisq_result)
 ```
 
+El test de ji-cuadrado indica que el sexo es independiente del grupo de tratamiento, lo que indica que los grupos están bien balanceados en torno a esta variable.
+
 ```{r norm tech, echo=FALSE}
 #### Density plot for tech_literacy
 ggplot(data, aes(x = tech_literacy)) +
   geom_density() +
   facet_wrap(~treatment)
 ```
+
+La evaluación de normalidad de literacidad tecnológica indica que se debe realizar un test no paramétrico. Utilizaremos Wilcoxon para encontrar diferencias en la mediana de literacidad en ambos grupos. Adicionalmente, estimaremos el tamaño del efecto utilizando Probabilidad de Superioridad (PS).
+
+Respecto a la variable edad, uno de los dos grupos tiene distribución normal y el otro no. Por lo tanto, utilizaremos una medida conservadora y realizaremos test no paramétricos para estimar diferencias entre los grupos.
 
 ```{r qq tech, echo=FALSE}
 #### QQ-plot for tech_literacy
@@ -136,10 +150,59 @@ wilcox_test_result <- wilcox_test(tech_literacy ~ treatment, data = data, conf.i
 print(wilcox_test_result)
 ```
 
+El test de wilcoxon para la variable de literacidad tecnológica indica que existen diferencias significativas en torno a la mediana de literacidad entre el grupo de tratamiento y el grupo control. Es decir, el grupo de tratamiento tiene mayor puntaje de literacidad tecnológica que el grupo de control.
+
 ```{r wilcox age, echo=FALSE}
 wilcox_test_result <- wilcox_test(age ~ treatment, data = data, conf.int = TRUE)
 print(wilcox_test_result)
 ```
 
+Por otro lado, el test para la variable edad indica que los grupos tienen un buen balance en términos de edad. No se evidencian diferencias significativas en torno a la mediana de edad.
 
+```{r, echo = FALSE}
+# Resultado de tu test de Wilcoxon
+wilcox_tech <- wilcox.test(tech_literacy ~ treatment, data = data)
+wilcox_age <- wilcox.test(age ~ treatment, data = data)
+# Extraer la estadística U
+U_tech <- wilcox_tech$statistic
+U_age <- wilcox_age$statistic
+# Tamaños de muestra de los grupos
+m <- 60
+n <- 60
 
+# Calcular PS
+PS_tech <- U_tech / (m * n)
+PS_age <- U_age / (m * n)
+# Imprimir PS
+print(PS_tech)
+print(PS_age)
+
+```
+
+Respecto a las medidas de tamaño del efecto, se puede decir lo siguiente:
+
+-   La probabilidad de que un paciente al azar del grupo de control tenga un puntaje de literacidad tecnológica mayor que un paciente al azar del grupo de tratamiento es del 27.7%
+
+-   La probabilidad de que un paciente al azar del grupo de control tenga un año más de edad que un paciente al azar del grupo de tratamiento es del 52.2%
+
+    ### Ventajas
+
+1.  **Facilidad de Adopción**: Una mayor literacidad tecnológica en el grupo de tratamiento sugiere que estos participantes podrían tener menos dificultades para adoptar y utilizar la aplicación móvil. Esto podría facilitar una mejor integración de la tecnología en su manejo de la diabetes.
+
+2.  **Menor Necesidad de Capacitación**: Menos recursos para capacitar a los usuarios en el uso de la aplicación, permitiendo que la intervención se centre más en el monitoreo y manejo de la diabetes en sí.
+
+3.  **Positivo Impacto en la Adherencia al Tratamiento**: Una mayor literacidad tecnológica podría estar asociada con una mejor adherencia al tratamiento, ya que los participantes pueden encontrar más fácil y atractivo el uso de la aplicación móvil.
+
+4.  **Informar Desarrollos Futuros**: Los resultados podrían guiar el desarrollo de futuras intervenciones tecnológicas, destacando que un nivel adecuado de literacidad tecnológica puede facilitar la adopción y el éxito de aplicaciones móviles en el contexto de la salud.
+
+### Desventajas
+
+1.  **Confounder Potencial**: La literacidad tecnológica podría actuar como un confounder. Si no se controla adecuadamente, podría dar la impresión de que la aplicación móvil es más efectiva de lo que realmente es, simplemente porque los usuarios con mayor literacidad tecnológica podrían tener una mejor capacidad para interactuar con la tecnología y, por lo tanto, obtener un mayor beneficio.
+
+2.  **Interpretación Cautelosa**: Es importante ser cauteloso al interpretar los resultados y considerar la posibilidad de que la mayor literacidad tecnológica en el grupo de tratamiento pueda haber influido en los resultados.
+
+3.  **Comunicación de Limitaciones**: Al publicar, sería importante comunicar esta limitación y cómo podría haber afectado los resultados del estudio.
+
+### Solución
+
+**Análisis Estratificado**: Podría ser útil realizar un análisis estratificado por niveles de literacidad tecnológica para ver si los efectos del tratamiento son consistentes a través de diferentes niveles de habilidad tecnológica.
